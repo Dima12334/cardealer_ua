@@ -4,7 +4,15 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, Uuid, Boolean, String, ForeignKey
 
 from config.database import Base
-from src.core.constants import BaseModelConstants, AreaConstants
+from src.core.constants import BaseModelConstants, BaseMediaModelConstants, AreaConstants
+
+
+class IsDeletedFieldMixin:
+    is_deleted = Column(Boolean, default=False)
+
+
+class NameFieldMixin:
+    name = Column(String(length=BaseModelConstants.NAME_MAX_LENGTH), nullable=False)
 
 
 class BaseModel(Base):
@@ -14,20 +22,22 @@ class BaseModel(Base):
     uuid = Column(Uuid, default=uuid.uuid4, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted = Column(Boolean, default=False)
 
 
-class BaseNameModel(BaseModel):
+class BaseMediaModel(BaseModel):
     __abstract__ = True
 
-    name = Column(String(length=BaseModelConstants.NAME_MAX_LENGTH), nullable=False)
+    filename = Column(String(length=BaseMediaModelConstants.FILENAME_MAX_LENGTH), nullable=False)
+    original_filename = Column(String(length=BaseMediaModelConstants.ORIGINAL_FILENAME_MAX_LENGTH), nullable=False)
+    size = Column(Integer, nullable=False)
+    mimetype = Column(String(length=BaseMediaModelConstants.MIMETYPE_MAX_LENGTH), nullable=False)
 
 
-class Country(BaseNameModel):
+class Country(NameFieldMixin, BaseModel):
     __tablename__ = "country"
 
 
-class Area(BaseNameModel):
+class Area(NameFieldMixin, BaseModel):
     __tablename__ = "area"
 
     country_id = Column(Integer, ForeignKey(Country.id), nullable=False)
@@ -36,7 +46,7 @@ class Area(BaseNameModel):
     )
 
 
-class City(BaseNameModel):
+class City(NameFieldMixin, BaseModel):
     __tablename__ = "city"
 
     country_id = Column(Integer, ForeignKey(Country.id), nullable=False)
