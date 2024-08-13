@@ -24,7 +24,7 @@ class BaseModel(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class BaseMediaModel(BaseModel):
+class BaseFileModel(BaseModel):
     __abstract__ = True
 
     filename = Column(String(length=BaseMediaModelConstants.FILENAME_MAX_LENGTH), nullable=False)

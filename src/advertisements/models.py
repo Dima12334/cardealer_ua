@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey, DateTime, Boolean, String, F
 
 from src.advertisements.constants import AdvertisementConstants
 from src.core.constants import NUMERIC_PLACES, NUMERIC_MAX_DIGITS
-from src.core.models import BaseModel, BaseMediaModel, NameFieldMixin, IsDeletedFieldMixin, Country, Area, City
+from src.core.models import BaseModel, BaseFileModel, NameFieldMixin, IsDeletedFieldMixin, Country, Area, City
 from src.users.models import User
 
 
@@ -52,7 +52,6 @@ class Advertisement(IsDeletedFieldMixin, BaseModel):
     area_id = Column(Integer, ForeignKey(Area.id), nullable=False)
     city_id = Column(Integer, ForeignKey(City.id), nullable=False)
     vin = Column(String(length=AdvertisementConstants.VIN_MAX_LENGTH), nullable=True)
-    vin_presence = Column(Boolean, nullable=False)
     was_in_accident = Column(Boolean, nullable=False)
 
     bargain = Column(Boolean, nullable=False)
@@ -77,12 +76,10 @@ class Advertisement(IsDeletedFieldMixin, BaseModel):
     configuration = Column(String(length=AdvertisementConstants.CONFIGURATION_MAX_LENGTH), nullable=False)
     count_owners = Column(Integer, nullable=False)
 
-    price_uah = Column(Numeric(precision=NUMERIC_MAX_DIGITS, scale=NUMERIC_PLACES), nullable=False)
     price_usd = Column(Numeric(precision=NUMERIC_MAX_DIGITS, scale=NUMERIC_PLACES), nullable=True)
-    price_eur = Column(Numeric(precision=NUMERIC_MAX_DIGITS, scale=NUMERIC_PLACES), nullable=True)
 
 
-class AdvertisementMedia(BaseMediaModel):
+class AdvertisementMedia(BaseFileModel):
     __tablename__ = "advertisement_media"
 
     advertisement_id = Column(Integer, ForeignKey(Advertisement.id), nullable=False)
